@@ -812,7 +812,8 @@
       const fullBadge = group.full ? '<span style="color: #dc3545; font-weight: 600;"> (FULL)</span>' : '';
       const noteText = group.note ? `<br><em style="color: #279AB3;">${group.note}</em>` : '';
       
-      marker.bindPopup(`
+      const popupContent = document.createElement('div');
+      popupContent.innerHTML = `
         <div style="display: flex; align-items: center; gap: 10px;">
           <img src="${group.image}" alt="${group.name}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #C0A365;">
           <div>
@@ -821,9 +822,19 @@
               <strong>${group.day}s</strong> at ${group.time}<br>
               📍 ${group.location}${noteText}
             </div>
+            ${!group.full ? `<button class="popup-join-btn" style="background: #C0A365; color: #272727; border: none; padding: 6px 14px; border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;">Join This Group</button>` : ''}
           </div>
         </div>
-      `);
+      `;
+      
+      if (!group.full) {
+        popupContent.querySelector('.popup-join-btn').addEventListener('click', () => {
+          marker.closePopup();
+          openModal(group);
+        });
+      }
+      
+      marker.bindPopup(popupContent);
       
       marker.groupData = group;
       markers.push(marker);
