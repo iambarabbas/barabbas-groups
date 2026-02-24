@@ -108,6 +108,11 @@
       color: var(--charcoal);
     }
     
+    .filter-btn.active[data-day="Sunday"] { background: #C0A365; border-color: #C0A365; }
+    .filter-btn.active[data-day="Monday"] { background: #279AB3; border-color: #279AB3; color: white; }
+    .filter-btn.active[data-day="Wednesday"] { background: #6B8E23; border-color: #6B8E23; color: white; }
+    .filter-btn.active[data-day="Thursday"] { background: #8B4513; border-color: #8B4513; color: white; }
+    
     /* Larger touch targets on tablet */
     @media (min-width: 768px) and (max-width: 1100px) {
       .filter-btn {
@@ -266,13 +271,17 @@
     
     .group-card .day-badge {
       display: inline-block;
-      background: var(--teal);
       color: white;
       font-size: 0.75rem;
       padding: 0.15rem 0.5rem;
       border-radius: 10px;
       margin-top: 0.5rem;
     }
+    
+    .group-card .day-badge.day-sunday { background: #C0A365; }
+    .group-card .day-badge.day-monday { background: #279AB3; }
+    .group-card .day-badge.day-wednesday { background: #6B8E23; }
+    .group-card .day-badge.day-thursday { background: #8B4513; }
     
     .group-card .full-badge {
       background: #dc3545;
@@ -633,7 +642,7 @@
             <h3>${group.name}</h3>
             <div class="details">${group.time} · ${group.location}</div>
             ${group.note ? `<div class="note">${group.note}</div>` : ''}
-            <span class="day-badge">${group.day}</span>
+            <span class="day-badge day-${group.day.toLowerCase()}">${group.day}</span>
             ${group.full ? '<span class="full-badge">FULL</span>' : ''}
           </div>
         `;
