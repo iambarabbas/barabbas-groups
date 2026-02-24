@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Groups Map | Barabbas Road Church</title>
+  <meta name="description" content="Find a Life Group near you. Weekly small groups throughout San Diego for fellowship, Bible study, and community.">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --charcoal: #272727;
+      --gold: #C0A365;
+      --teal: #279AB3;
+      --white: #ffffff;
+      --light-gray: #f5f5f5;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--light-gray);
+      color: var(--charcoal);
+      line-height: 1.6;
+    }
+    
+    /* Header */
+    .header {
+      background: var(--charcoal);
+      color: var(--white);
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+    
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* Filter Section */
+    .filter-section {
+      background: var(--white);
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .filter-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .filter-label {
+      font-weight: 600;
+      color: var(--charcoal);
+      margin-right: 0.5rem;
+    }
+    
+    .filter-btn {
+      padding: 0.6rem 1.25rem;
+      border: 2px solid var(--charcoal);
+      background: var(--white);
+      color: var(--charcoal);
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-btn:hover {
+      background: var(--light-gray);
+    }
+    
+    .filter-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--charcoal);
+    }
+    
+    /* Main Content */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 0;
+      min-height: calc(100vh - 200px);
+    }
+    
+    @media (max-width: 900px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Map */
+    #map {
+      height: 600px;
+      width: 100%;
+      min-height: 500px;
+    }
+    
+    @media (max-width: 900px) {
+      #map {
+        height: 400px;
+      }
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: var(--white);
+      padding: 2rem;
+      overflow-y: auto;
+      max-height: 600px;
+    }
+    
+    @media (max-width: 900px) {
+      .sidebar {
+        max-height: none;
+      }
+    }
+    
+    .sidebar h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--charcoal);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    
+    /* Group Cards */
+    .group-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .group-card {
+      background: var(--light-gray);
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--gold);
+    }
+    
+    .group-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .group-card.hidden {
+      display: none;
+    }
+    
+    .group-card.full {
+      opacity: 0.6;
+      border-left-color: #999;
+    }
+    
+    .group-card h3 {
+      font-size: 1rem;
+      color: var(--charcoal);
+      margin-bottom: 0.25rem;
+    }
+    
+    .group-card .details {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .group-card .day-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      margin-top: 0.5rem;
+    }
+    
+    .group-card .full-badge {
+      background: #dc3545;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      margin-left: 0.5rem;
+    }
+    
+    .group-card .note {
+      font-size: 0.8rem;
+      color: var(--teal);
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+    
+    /* Signup Form */
+    .signup-section {
+      background: var(--charcoal);
+      color: var(--white);
+      padding: 3rem 2rem;
+    }
+    
+    .signup-container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .signup-section h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    
+    .signup-section p {
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+    
+    .signup-form {
+      display: grid;
+      gap: 1rem;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    @media (max-width: 500px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .form-group {
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.35rem;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: 'Open Sans', sans-serif;
+    }
+    
+    .form-group select {
+      cursor: pointer;
+    }
+    
+    .submit-btn {
+      background: var(--gold);
+      color: var(--charcoal);
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Open Sans', sans-serif;
+      margin-top: 0.5rem;
+    }
+    
+    .submit-btn:hover {
+      background: #d4b578;
+      transform: translateY(-2px);
+    }
+    
+    /* Popup Styles */
+    .leaflet-popup-content-wrapper {
+      border-radius: 8px;
+    }
+    
+    .leaflet-popup-content {
+      margin: 12px 16px;
+    }
+    
+    .popup-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--charcoal);
+    }
+    
+    .popup-details {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    /* Footer */
+    .footer {
+      background: var(--charcoal);
+      color: var(--white);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    
+    /* No results message */
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+      display: none;
+    }
+    
+    .no-results.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Life Groups</h1>
+    <p>Find community, grow in faith, and build lasting friendships. Life Groups meet weekly throughout San Diego.</p>
+  </header>
+  
+  <section class="filter-section">
+    <div class="filter-container">
+      <span class="filter-label">Filter by Day:</span>
+      <button class="filter-btn active" data-day="all">All Days</button>
+      <button class="filter-btn" data-day="Sunday">Sunday</button>
+      <button class="filter-btn" data-day="Monday">Monday</button>
+      <button class="filter-btn" data-day="Wednesday">Wednesday</button>
+      <button class="filter-btn" data-day="Thursday">Thursday</button>
+    </div>
+  </section>
+  
+  <main class="main-content">
+    <div id="map"></div>
+    
+    <aside class="sidebar">
+      <h2>Groups (<span id="group-count">18</span>)</h2>
+      <div class="group-list" id="group-list">
+        <!-- Group cards populated by JS -->
+      </div>
+      <div class="no-results" id="no-results">
+        No groups meet on this day. Try selecting a different day.
+      </div>
+    </aside>
+  </main>
+  
+  <section class="signup-section">
+    <div class="signup-container">
+      <h2>Join a Life Group</h2>
+      <p>Interested in joining a group? Fill out the form below and we'll connect you with a group leader.</p>
+      
+      <form class="signup-form" id="signup-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" name="lastName" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="preferredDay">Preferred Day</label>
+            <select id="preferredDay" name="preferredDay">
+              <option value="">No preference</option>
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="preferredArea">Preferred Area</label>
+            <select id="preferredArea" name="preferredArea">
+              <option value="">No preference</option>
+              <option value="North County">North County</option>
+              <option value="Central San Diego">Central San Diego</option>
+              <option value="East County">East County</option>
+              <option value="South Bay">South Bay</option>
+              <option value="Coastal">Coastal</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="submit-btn">Sign Up for a Life Group</button>
+      </form>
+    </div>
+  </section>
+  
+  <footer class="footer">
+    <p>&copy; 2026 <a href="https://www.barabbas.com">Barabbas Road Church</a> · 7340 Miramar Rd, San Diego, CA · 619.289.8987</p>
+  </footer>
+  
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <script>
+    // Group data with coordinates
+    const groups = [
+      { id: 1, name: "Church Campus Group", day: "Sunday", time: "12:30pm", location: "Church Campus", lat: 32.8754, lng: -117.1425, full: true },
+      { id: 2, name: "Scripps Ranch Group", day: "Sunday", time: "1:00pm", location: "Scripps Ranch", lat: 32.9000, lng: -117.1000, full: false },
+      { id: 3, name: "Lemon Grove Group", day: "Sunday", time: "2:00pm", location: "Lemon Grove", lat: 32.7425, lng: -117.0314, full: false },
+      { id: 4, name: "Coronado Group", day: "Sunday", time: "6:00pm", location: "Coronado", lat: 32.6859, lng: -117.1831, full: false },
+      { id: 5, name: "Scripps Ranch Evening", day: "Sunday", time: "6:00pm", location: "Scripps Ranch", lat: 32.9050, lng: -117.1050, full: true },
+      { id: 6, name: "Cardiff Group", day: "Monday", time: "6:00pm", location: "Cardiff", lat: 33.0214, lng: -117.2766, full: false },
+      { id: 7, name: "Bay Park Group", day: "Monday", time: "6:30pm", location: "Bay Park", lat: 32.7905, lng: -117.2120, full: false },
+      { id: 8, name: "Crown Point/PB Group", day: "Monday", time: "6:30pm", location: "Crown Point/PB", lat: 32.7874, lng: -117.2360, full: false, note: "2nd & 4th Monday" },
+      { id: 9, name: "Rancho Peñasquitos Group", day: "Wednesday", time: "5:00pm", location: "Rancho Peñasquitos", lat: 32.9595, lng: -117.1128, full: false },
+      { id: 10, name: "Justin's Group", day: "Wednesday", time: "6:00pm", location: "Ministry Center", lat: 32.8760, lng: -117.1430, full: false },
+      { id: 11, name: "Santee Group", day: "Wednesday", time: "6:30pm", location: "Santee", lat: 32.8384, lng: -116.9739, full: false },
+      { id: 12, name: "University City Group", day: "Wednesday", time: "6:30pm", location: "University City", lat: 32.8660, lng: -117.2100, full: false },
+      { id: 13, name: "La Mesa Group", day: "Wednesday", time: "6:00pm", location: "La Mesa", lat: 32.7678, lng: -117.0231, full: true },
+      { id: 14, name: "Adriana's Group", day: "Thursday", time: "9:30am", location: "Clairemont", lat: 32.8370, lng: -117.2000, full: false, note: "Women's Only" },
+      { id: 15, name: "Church Campus Group", day: "Thursday", time: "6:00pm", location: "Church Campus", lat: 32.8754, lng: -117.1425, full: false },
+      { id: 16, name: "Del Cerro/SDSU Group", day: "Thursday", time: "6:30pm", location: "Del Cerro / SDSU", lat: 32.7700, lng: -117.0600, full: false },
+      { id: 17, name: "El Cajon Group", day: "Thursday", time: "6:30pm", location: "El Cajon", lat: 32.7948, lng: -116.9625, full: false },
+      { id: 18, name: "Clairemont Evening", day: "Thursday", time: "7:00pm", location: "Clairemont", lat: 32.8420, lng: -117.1950, full: false }
+    ];
+    
+    // Day colors
+    const dayColors = {
+      Sunday: '#C0A365',
+      Monday: '#279AB3',
+      Wednesday: '#6B8E23',
+      Thursday: '#8B4513'
+    };
+    
+    // Initialize map centered on San Diego
+    const map = L.map('map').setView([32.83, -117.10], 11);
+    
+    // Add tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Store markers for filtering
+    const markers = [];
+    
+    // Create custom icon
+    function createIcon(day, full) {
+      const color = full ? '#999' : dayColors[day];
+      return L.divIcon({
+        className: 'custom-marker',
+        html: `<div style="
+          background: ${color};
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 3px solid white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        "></div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -14]
+      });
+    }
+    
+    // Add markers for each group
+    groups.forEach(group => {
+      const marker = L.marker([group.lat, group.lng], {
+        icon: createIcon(group.day, group.full)
+      }).addTo(map);
+      
+      const fullBadge = group.full ? '<span style="color: #dc3545; font-weight: 600;"> (FULL)</span>' : '';
+      const noteText = group.note ? `<br><em style="color: #279AB3;">${group.note}</em>` : '';
+      
+      marker.bindPopup(`
+        <div class="popup-title">${group.name}${fullBadge}</div>
+        <div class="popup-details">
+          <strong>${group.day}s</strong> at ${group.time}<br>
+          📍 ${group.location}${noteText}
+        </div>
+      `);
+      
+      marker.groupData = group;
+      markers.push(marker);
+    });
+    
+    // Render group cards
+    function renderGroupCards(filteredGroups) {
+      const container = document.getElementById('group-list');
+      const noResults = document.getElementById('no-results');
+      const countEl = document.getElementById('group-count');
+      
+      container.innerHTML = '';
+      countEl.textContent = filteredGroups.length;
+      
+      if (filteredGroups.length === 0) {
+        noResults.classList.add('visible');
+        return;
+      }
+      
+      noResults.classList.remove('visible');
+      
+      filteredGroups.forEach(group => {
+        const card = document.createElement('div');
+        card.className = `group-card${group.full ? ' full' : ''}`;
+        card.innerHTML = `
+          <h3>${group.name}</h3>
+          <div class="details">${group.time} · ${group.location}</div>
+          ${group.note ? `<div class="note">${group.note}</div>` : ''}
+          <span class="day-badge">${group.day}</span>
+          ${group.full ? '<span class="full-badge">FULL</span>' : ''}
+        `;
+        
+        card.addEventListener('click', () => {
+          map.setView([group.lat, group.lng], 14);
+          const marker = markers.find(m => m.groupData.id === group.id);
+          if (marker) marker.openPopup();
+        });
+        
+        container.appendChild(card);
+      });
+    }
+    
+    // Initial render
+    renderGroupCards(groups);
+    
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active state
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const day = btn.dataset.day;
+        
+        // Filter markers
+        markers.forEach(marker => {
+          if (day === 'all' || marker.groupData.day === day) {
+            marker.addTo(map);
+          } else {
+            marker.remove();
+          }
+        });
+        
+        // Filter cards
+        const filteredGroups = day === 'all' 
+          ? groups 
+          : groups.filter(g => g.day === day);
+        
+        renderGroupCards(filteredGroups);
+        
+        // Fit map to visible markers
+        if (day !== 'all') {
+          const visibleMarkers = markers.filter(m => m.groupData.day === day);
+          if (visibleMarkers.length > 0) {
+            const group = L.featureGroup(visibleMarkers);
+            map.fitBounds(group.getBounds().pad(0.2));
+          }
+        } else {
+          map.setView([32.83, -117.10], 11);
+        }
+      });
+    });
+    
+    // Form submission
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+      
+      // For now, show confirmation (in production, send to backend)
+      alert(`Thanks ${data.firstName}! We'll be in touch soon to connect you with a Life Group.`);
+      this.reset();
+      
+      // TODO: Send to actual form handler
+      // fetch('/api/signup', { method: 'POST', body: JSON.stringify(data) });
+    });
+  </script>
+</body>
+</html>
