@@ -533,8 +533,8 @@
     // Initialize map centered on San Diego
     const map = L.map('map').setView([32.83, -117.10], 11);
     
-    // Add tile layer (CartoDB Positron - clean minimal style)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // Add tile layer (CartoDB Voyager - clean with readable labels)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '© OpenStreetMap contributors, © CARTO',
       subdomains: 'abcd',
       maxZoom: 19
