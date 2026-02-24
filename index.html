@@ -85,16 +85,17 @@
     }
     
     .filter-btn {
-      padding: 0.6rem 1.25rem;
+      padding: 0.75rem 1.5rem;
       border: 2px solid var(--charcoal);
       background: var(--white);
       color: var(--charcoal);
       font-family: 'Open Sans', sans-serif;
       font-weight: 500;
-      font-size: 0.95rem;
+      font-size: 1rem;
       border-radius: 25px;
       cursor: pointer;
       transition: all 0.2s ease;
+      min-height: 48px; /* Touch-friendly minimum */
     }
     
     .filter-btn:hover {
@@ -107,6 +108,14 @@
       color: var(--charcoal);
     }
     
+    /* Larger touch targets on tablet */
+    @media (min-width: 768px) and (max-width: 1100px) {
+      .filter-btn {
+        padding: 0.85rem 1.75rem;
+        font-size: 1.05rem;
+      }
+    }
+    
     /* Main Content */
     .main-content {
       display: grid;
@@ -117,7 +126,7 @@
       min-height: calc(100vh - 200px);
     }
     
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
       .main-content {
         grid-template-columns: 1fr;
       }
@@ -130,9 +139,30 @@
       min-height: 500px;
     }
     
-    @media (max-width: 900px) {
+    /* iPad optimizations */
+    @media (min-width: 768px) and (max-width: 1100px) {
       #map {
-        height: 400px;
+        height: 55vh;
+        min-height: 450px;
+      }
+    }
+    
+    /* iPad landscape */
+    @media (min-width: 1024px) and (max-height: 900px) and (orientation: landscape) {
+      .main-content {
+        grid-template-columns: 1fr 380px;
+      }
+      #map {
+        height: calc(100vh - 180px);
+      }
+      .sidebar {
+        max-height: calc(100vh - 180px);
+      }
+    }
+    
+    @media (max-width: 767px) {
+      #map {
+        height: 350px;
       }
     }
     
@@ -144,9 +174,10 @@
       max-height: 600px;
     }
     
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
       .sidebar {
         max-height: none;
+        padding: 1.5rem;
       }
     }
     
@@ -168,15 +199,29 @@
     .group-card {
       background: var(--light-gray);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.1rem 1.25rem;
       cursor: pointer;
       transition: all 0.2s ease;
       border-left: 4px solid var(--gold);
+      min-height: 80px;
     }
     
-    .group-card:hover {
+    .group-card:hover,
+    .group-card:active {
       transform: translateX(4px);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* iPad card sizing */
+    @media (min-width: 768px) and (max-width: 1100px) {
+      .group-card {
+        padding: 1.25rem 1.5rem;
+      }
+      .group-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
     }
     
     .group-card.hidden {
