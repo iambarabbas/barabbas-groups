@@ -697,7 +697,9 @@
     <div class="signup-container">
       <h2>Find Your Community</h2>
       <p>Browse the groups above and click <strong>"Join Group"</strong> on any group that fits your schedule. We'll connect you with the leader!</p>
-      <p style="margin-top: 1rem; opacity: 0.8;">Questions? Call us at <a href="tel:619-289-8987" style="color: var(--gold);">619.289.8987</a> or visit on Sunday morning.</p>
+      <p style="margin-top: 1rem; opacity: 0.8;">Not sure about a group yet? Want to talk to a pastor or learn about baptism?</p>
+      <button class="submit-btn" onclick="openGeneralModal()" style="margin-top: 1rem;">I'm Interested</button>
+      <p style="margin-top: 1.5rem; opacity: 0.7; font-size: 0.9rem;">Or call us at <a href="tel:619-289-8987" style="color: var(--gold);">619.289.8987</a></p>
     </div>
   </section>
   
@@ -949,23 +951,24 @@
     function openModal(group) {
       currentGroup = group;
       
-      // Populate modal
+      // Populate modal header
       document.getElementById('modal-image').src = group.image;
       document.getElementById('modal-name').textContent = group.name;
       document.getElementById('modal-details').textContent = `${group.day}s at ${group.time} · ${group.location}`;
-      document.getElementById('modal-group-id').value = `${group.name} (${group.day} ${group.time}, ${group.location})`;
       
       // Set badge color
       const badge = document.getElementById('modal-badge');
       badge.textContent = group.day;
       badge.style.background = dayColors[group.day];
       
+      // Show header
+      document.getElementById('modal-header').style.display = 'block';
+      
       // Reset form
-      document.getElementById('modal-form').reset();
       document.getElementById('modal-body').innerHTML = `
         <p>Fill out the form below and we'll connect you with this group!</p>
         <form class="modal-form" id="modal-form">
-          <input type="hidden" id="modal-group-id" name="group" value="${group.name} (${group.day} ${group.time}, ${group.location})">
+          <input type="hidden" name="group" value="${group.name} (${group.day} ${group.time}, ${group.location})">
           <div class="form-group">
             <label for="modal-name-input">Your Name *</label>
             <input type="text" id="modal-name-input" name="name" required placeholder="First and Last Name">
@@ -978,7 +981,67 @@
             <label for="modal-phone">Phone</label>
             <input type="tel" id="modal-phone" name="phone" placeholder="(619) 555-1234">
           </div>
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 400; cursor: pointer;">
+              <input type="checkbox" name="talkToPastor" value="Yes" style="width: 18px; height: 18px;">
+              I would like to talk to a Pastor
+            </label>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 400; cursor: pointer;">
+              <input type="checkbox" name="baptism" value="Yes" style="width: 18px; height: 18px;">
+              I'm interested in baptism
+            </label>
+          </div>
           <button type="submit" class="submit-btn" id="modal-submit">Join This Group</button>
+        </form>
+      `;
+      
+      // Attach form handler
+      document.getElementById('modal-form').addEventListener('submit', handleModalSubmit);
+      
+      // Show modal
+      modalOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function openGeneralModal() {
+      currentGroup = null;
+      
+      // Hide header for general inquiries
+      document.getElementById('modal-header').style.display = 'none';
+      
+      // Show general form
+      document.getElementById('modal-body').innerHTML = `
+        <h3 style="text-align: center; margin-bottom: 0.5rem; color: var(--charcoal);">Get Connected</h3>
+        <p style="text-align: center; color: #666; margin-bottom: 1.25rem;">Fill out the form below and someone will reach out!</p>
+        <form class="modal-form" id="modal-form">
+          <input type="hidden" name="group" value="">
+          <div class="form-group">
+            <label for="modal-name-input">Your Name *</label>
+            <input type="text" id="modal-name-input" name="name" required placeholder="First and Last Name">
+          </div>
+          <div class="form-group">
+            <label for="modal-email">Email *</label>
+            <input type="email" id="modal-email" name="email" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label for="modal-phone">Phone</label>
+            <input type="tel" id="modal-phone" name="phone" placeholder="(619) 555-1234">
+          </div>
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 400; cursor: pointer;">
+              <input type="checkbox" name="talkToPastor" value="Yes" style="width: 18px; height: 18px;">
+              I would like to talk to a Pastor
+            </label>
+          </div>
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 400; cursor: pointer;">
+              <input type="checkbox" name="baptism" value="Yes" style="width: 18px; height: 18px;">
+              I'm interested in baptism
+            </label>
+          </div>
+          <button type="submit" class="submit-btn" id="modal-submit">Submit</button>
         </form>
       `;
       
@@ -1034,14 +1097,19 @@
         
         if (response.ok) {
           // Show success
+          const successMessage = currentGroup 
+            ? `We've received your request to join ${currentGroup.name}. Someone will be in touch soon!`
+            : `We've received your information. Someone will be in touch soon!`;
           document.getElementById('modal-body').innerHTML = `
             <div class="modal-success">
               <div class="checkmark">✓</div>
-              <h3>You're In!</h3>
-              <p>We've received your request to join ${currentGroup.name}. Someone will be in touch soon!</p>
+              <h3>Thank You!</h3>
+              <p>${successMessage}</p>
               <button class="close-btn" onclick="closeModal()">Done</button>
             </div>
           `;
+          // Hide header on success for cleaner look
+          document.getElementById('modal-header').style.display = 'none';
         } else {
           throw new Error('Form submission failed');
         }
