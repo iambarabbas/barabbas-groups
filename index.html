@@ -966,7 +966,6 @@
       
       // Reset form
       document.getElementById('modal-body').innerHTML = `
-        <p>Fill out the form below and we'll connect you with this group!</p>
         <form class="modal-form" id="modal-form">
           <input type="hidden" name="group" value="${group.name} (${group.day} ${group.time}, ${group.location})">
           <div class="form-group">
@@ -1013,8 +1012,7 @@
       
       // Show general form
       document.getElementById('modal-body').innerHTML = `
-        <h3 style="text-align: center; margin-bottom: 0.5rem; color: var(--charcoal);">Get Connected</h3>
-        <p style="text-align: center; color: #666; margin-bottom: 1.25rem;">Fill out the form below and someone will reach out!</p>
+        <h3 style="text-align: center; margin-bottom: 1rem; color: var(--charcoal);">Get Connected</h3>
         <form class="modal-form" id="modal-form">
           <input type="hidden" name="group" value="">
           <div class="form-group">
