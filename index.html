@@ -1050,8 +1050,8 @@
       submitBtn.textContent = 'Sending...';
       
       try {
-        // Send to Formspree (replace with your form ID)
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxF2U7bDMyeF4dV1895rDW_m08jFNXh8W9Sc4V9xY2mlUp387J57CHrxQrBL7HvgvNz0w/exec', {
+        // Send to Formspree
+        const response = await fetch('https://formspree.io/f/xnjypjpj', {
           method: 'POST',
           body: formData,
           headers: {
