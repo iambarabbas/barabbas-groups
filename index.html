@@ -282,6 +282,24 @@
       display: none;
     }
     
+    .group-card.on-break {
+      opacity: 0.55;
+      border-left-color: #e0a020;
+    }
+    
+    .group-card .break-badge {
+      background: #e0a020;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      margin-left: 0.5rem;
+    }
+    
+    .group-card.on-break .join-btn {
+      display: none;
+    }
+    
     .group-card .note {
       font-size: 0.8rem;
       color: var(--teal);
@@ -713,22 +731,22 @@
   <script>
     // Group data with coordinates and leader photos
     const groups = [
-      { id: 1, name: "Brett & Kari's Group", day: "Sunday", time: "12:30pm", location: "Church Campus", lat: 32.8754, lng: -117.1425, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/brettkari3.jpg" },
-      { id: 2, name: "Jesse's Group", day: "Sunday", time: "1:00pm", location: "Scripps Ranch", lat: 32.9000, lng: -117.1000, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jesse.png" },
-      { id: 3, name: "Justin's Group", day: "Sunday", time: "2:00pm", location: "Lemon Grove", lat: 32.7425, lng: -117.0314, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/justin.png" },
-      { id: 4, name: "Jeremy's Group", day: "Sunday", time: "6:00pm", location: "Coronado", lat: 32.6859, lng: -117.1831, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jeremy1.png" },
-      { id: 5, name: "Jon Paul's Group", day: "Sunday", time: "6:00pm", location: "Scripps Ranch", lat: 32.9050, lng: -117.1050, full: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jonpaul.jpg" },
-      { id: 6, name: "Mark's Group", day: "Monday", time: "6:00pm", location: "Cardiff", lat: 33.0214, lng: -117.2766, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/mark.png" },
-      { id: 7, name: "Brett's Group", day: "Monday", time: "6:30pm", location: "Bay Park", lat: 32.7905, lng: -117.2120, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/brett2.png" },
-      { id: 8, name: "Jon's Group", day: "Monday", time: "6:30pm", location: "Crown Point/PB", lat: 32.7874, lng: -117.2360, full: false, note: "2nd & 4th Monday", image: "https://www.barabbas.com/wp-content/uploads/2015/05/jon.png" },
-      { id: 9, name: "Rob's Group", day: "Wednesday", time: "5:00pm", location: "Rancho Peñasquitos", lat: 32.9595, lng: -117.1128, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/rob.jpg" },
-      { id: 11, name: "Connor's Group", day: "Wednesday", time: "6:30pm", location: "Santee", lat: 32.8384, lng: -116.9739, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/connor.png" },
-      { id: 12, name: "Beau's Group", day: "Wednesday", time: "6:30pm", location: "University City", lat: 32.8660, lng: -117.2100, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/beau2.png" },
-      { id: 13, name: "Garrett's Group", day: "Wednesday", time: "6:00pm", location: "La Mesa", lat: 32.7678, lng: -117.0231, full: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/garrett.png" },
-      { id: 15, name: "Tyler's Group", day: "Thursday", time: "6:00pm", location: "Church Campus", lat: 32.8754, lng: -117.1425, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/tyler.jpg" },
-      { id: 16, name: "Robert's Group", day: "Thursday", time: "6:30pm", location: "Del Cerro / SDSU", lat: 32.7700, lng: -117.0600, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/robert.png" },
-      { id: 17, name: "Brandon's Group", day: "Thursday", time: "6:30pm", location: "El Cajon", lat: 32.7948, lng: -116.9625, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/brandon.jpg" },
-      { id: 18, name: "Jim's Group", day: "Thursday", time: "7:00pm", location: "Clairemont", lat: 32.8420, lng: -117.1950, full: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jim1.png" }
+      { id: 1, name: "Brett & Kari's Group", day: "Sunday", time: "12:30pm", location: "Church Campus", lat: 32.8754, lng: -117.1425, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/brettkari3.jpg" },
+      { id: 2, name: "Jesse's Group", day: "Sunday", time: "1:00pm", location: "Scripps Ranch", lat: 32.9000, lng: -117.1000, full: false, break: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jesse.png" },
+      { id: 3, name: "Justin's Group", day: "Sunday", time: "2:00pm", location: "Lemon Grove", lat: 32.7425, lng: -117.0314, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/justin.png" },
+      { id: 4, name: "Jeremy's Group", day: "Sunday", time: "6:00pm", location: "Coronado", lat: 32.6859, lng: -117.1831, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jeremy1.png" },
+      { id: 5, name: "Jon Paul's Group", day: "Sunday", time: "6:00pm", location: "Scripps Ranch", lat: 32.9050, lng: -117.1050, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jonpaul.jpg" },
+      { id: 6, name: "Mark's Group", day: "Monday", time: "6:00pm", location: "Cardiff", lat: 33.0214, lng: -117.2766, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/mark.png" },
+      { id: 7, name: "Brett's Group", day: "Monday", time: "6:30pm", location: "Bay Park", lat: 32.7905, lng: -117.2120, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/brett2.png" },
+      { id: 8, name: "Jon's Group", day: "Monday", time: "6:30pm", location: "Crown Point/PB", lat: 32.7874, lng: -117.2360, full: false, break: false, note: "2nd & 4th Monday", image: "https://www.barabbas.com/wp-content/uploads/2015/05/jon.png" },
+      { id: 9, name: "Rob's Group", day: "Wednesday", time: "5:00pm", location: "Rancho Peñasquitos", lat: 32.9595, lng: -117.1128, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/rob.jpg" },
+      { id: 11, name: "Connor's Group", day: "Wednesday", time: "6:30pm", location: "Santee", lat: 32.8384, lng: -116.9739, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/connor.png" },
+      { id: 12, name: "Beau's Group", day: "Wednesday", time: "6:30pm", location: "University City", lat: 32.8660, lng: -117.2100, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/beau2.png" },
+      { id: 13, name: "Garrett's Group", day: "Wednesday", time: "6:00pm", location: "La Mesa", lat: 32.7678, lng: -117.0231, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/garrett.png" },
+      { id: 15, name: "Tyler's Group", day: "Thursday", time: "6:00pm", location: "Church Campus", lat: 32.8754, lng: -117.1425, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/tyler.jpg" },
+      { id: 16, name: "Robert's Group", day: "Thursday", time: "6:30pm", location: "Del Cerro / SDSU", lat: 32.7700, lng: -117.0600, full: false, break: true, image: "https://www.barabbas.com/wp-content/uploads/2015/05/robert.png" },
+      { id: 17, name: "Brandon's Group", day: "Thursday", time: "6:30pm", location: "El Cajon", lat: 32.7948, lng: -116.9625, full: false, break: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/brandon.jpg" },
+      { id: 18, name: "Jim's Group", day: "Thursday", time: "7:00pm", location: "Clairemont", lat: 32.8420, lng: -117.1950, full: false, break: false, image: "https://www.barabbas.com/wp-content/uploads/2015/05/jim1.png" }
     ];
     
     // Day colors
@@ -753,8 +771,8 @@
     const markers = [];
     
     // Create custom icon
-    function createIcon(day, full) {
-      const color = full ? '#999' : dayColors[day];
+    function createIcon(day, full, onBreak) {
+      const color = onBreak ? '#e0a020' : (full ? '#999' : dayColors[day]);
       return L.divIcon({
         className: 'custom-marker',
         html: `<div style="
@@ -774,10 +792,10 @@
     // Add markers for each group
     groups.forEach(group => {
       const marker = L.marker([group.lat, group.lng], {
-        icon: createIcon(group.day, group.full)
+        icon: createIcon(group.day, group.full, group.break)
       }).addTo(map);
       
-      const fullBadge = group.full ? '<span style="color: #dc3545; font-weight: 600;"> (FULL)</span>' : '';
+      const statusBadge = group.full ? '<span style="color: #dc3545; font-weight: 600;"> (FULL)</span>' : (group.break ? '<span style="color: #e0a020; font-weight: 600;"> (ON BREAK)</span>' : '');
       const noteText = group.note ? `<br><em style="color: #279AB3;">${group.note}</em>` : '';
       
       const popupContent = document.createElement('div');
@@ -785,17 +803,17 @@
         <div style="display: flex; align-items: center; gap: 10px;">
           <img src="${group.image}" alt="${group.name}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #C0A365;">
           <div>
-            <div class="popup-title">${group.name}${fullBadge}</div>
+            <div class="popup-title">${group.name}${statusBadge}</div>
             <div class="popup-details">
               <strong>${group.day}s</strong> at ${group.time}<br>
               📍 ${group.location}${noteText}
             </div>
-            ${!group.full ? `<button class="popup-join-btn" style="background: #C0A365; color: #272727; border: none; padding: 6px 14px; border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;">Join This Group</button>` : ''}
+            ${(!group.full && !group.break) ? `<button class="popup-join-btn" style="background: #C0A365; color: #272727; border: none; padding: 6px 14px; border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;">Join This Group</button>` : ''}
           </div>
         </div>
       `;
       
-      if (!group.full) {
+      if (!group.full && !group.break) {
         popupContent.querySelector('.popup-join-btn').addEventListener('click', () => {
           marker.closePopup();
           openModal(group);
@@ -826,7 +844,7 @@
       
       filteredGroups.forEach(group => {
         const card = document.createElement('div');
-        card.className = `group-card${group.full ? ' full' : ''}`;
+        card.className = `group-card${group.full ? ' full' : ''}${group.break ? ' on-break' : ''}`;
         card.innerHTML = `
           <img src="${group.image}" alt="${group.name}" class="leader-photo" loading="lazy">
           <div class="card-content">
@@ -836,7 +854,8 @@
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
               <span class="day-badge day-${group.day.toLowerCase()}">${group.day}</span>
               ${group.full ? '<span class="full-badge">FULL</span>' : ''}
-              ${!group.full ? `<button class="join-btn" data-group-id="${group.id}">Join Group</button>` : ''}
+              ${group.break ? '<span class="break-badge">ON BREAK</span>' : ''}
+              ${(!group.full && !group.break) ? `<button class="join-btn" data-group-id="${group.id}">Join Group</button>` : ''}
             </div>
           </div>
         `;
